@@ -4,4 +4,4 @@ from sqlalchemy.dialects.mysql import match
 from . import models, schemas
 
 def search(db: Session, arg: str, field: str):
-    return
+    return {"res":"Not found"}

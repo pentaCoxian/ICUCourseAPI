@@ -27,9 +27,7 @@ cd ./icuCourseAPI
 python3.11 -m venv venv
 
 source venv/bin/activate
-pip install fastapi
-pip install "uvicorn[standard]"
-pip install sqlalchemy python-dotenv mariadb
+pip install fastapi "uvicorn[standard]" sqlalchemy python-dotenv mariadb "python-jose[cryptography]" "passlib[bcrypt]"
 ```
 
 Finally,
@@ -39,6 +37,5 @@ uvicorn sqlapp.main:app --reload
 ```
 
 > [!TIP]
-> When deploying as a service, consider using gunicorn to make runners as well as adding a reverce proxy.
 
 

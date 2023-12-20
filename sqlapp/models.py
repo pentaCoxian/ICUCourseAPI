@@ -1,13 +1,8 @@
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, text
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Text
 import sqlalchemy as sa
 from sqlalchemy.orm import relationship
-from sqlalchemy.ext.declarative import declarative_base
+
 from .database import Base
-
-load_dotenv()
-
-engine = create_engine(os.environ['MARIADB_ADDRESS'],echo=True)
-Base = declarative_base()
 
 class Course(Base):
     __tablename__ = "courses"
