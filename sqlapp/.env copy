@@ -1,0 +1,2 @@
+# Replace <> values to the credentials you made. ex:<User>@<password>@<ip> may become pentacoxian:password123@127.0.0.1:3306 (not an actual value but you get the point)
+MARIADB_ADDRESS=mariadb+mariadbconnector://<User>:<password for user>@<ip address>:3306/<database name>?charset=utf8mb4
