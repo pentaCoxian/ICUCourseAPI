@@ -29,35 +29,47 @@ def get_db():
     finally:
         db.close()
 
-@app.get("/check")
+# /api/cataloge/v1/check
+@app.get("/api/cataloge/check")
 def check(db: Session = Depends(get_db)):
     return {"msg":"Welcome to ICU course API"}
 
+# /api/cataloge/v1/auth
 @app.get("/api/v1/")
 def 
 
-# /api/v1/auth
 
-# /api/v1/course/list
+# /api/cataloge/v1/course/list
 #   -token
 #   -list of col
+#
+#   return array of json obj
 
-# /api/v1/course/details
+# /api/cataloge/v1/course/details
 #   -token
 #   -regid
+#   -list of col
+#
+#   return all data of course - syllabus (could add generated syllabus url I suppose)
 
-# /api/v1/course/time <- want more func. 
+# /api/cataloge/v1/course/time <- want more func. /
 #   -token
-#   -list of values
+#   -list of search time values
 #   -match method
+#   -list of cols
+#
+#   return list of regno
 
-# /api/v1/course/major
+# /api/cataloge/v1/course/major
 #   -token (maybe open endpoint)
 #   -major
+#   -list of
 
-# /api/v1/course/search
+# /api/cataloge/v1/course/search
 #   -token
 #   -col to search from
+
+# I suppose /major /search are kind of the same. request may be {"searchAgainstCols":['hogeCol','fugaCol'],"returnCols",['hekoCol','pikaCol'],"query":"pontara"}
 
 # 単語のFuzzy Searchとかの権限は渡せないかも (DB作成のリポはあげたのとそこから機能拡張で対応はできるからチャレンジしてみるの自由)
 # 同様にELAの教室情報も外部公開しないかも
