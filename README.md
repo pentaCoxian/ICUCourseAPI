@@ -41,7 +41,7 @@ source venv/bin/activate
 pip install fastapi "uvicorn[standard]" sqlalchemy python-dotenv mariadb "python-jose[cryptography]" "passlib[bcrypt]" gunicorn
 ```
 
-Finally,
+Finally, for development use the `--reload` prefix for hot reload. Use of gunicorn to spawn workers and adding the service to systemd are also highly recommended for production.
 
 ```
 uvicorn sqlapp.main:app --reload
