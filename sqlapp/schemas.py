@@ -16,7 +16,7 @@ class CourseBase(BaseModel):
     maxnum: str
     instructor: str
     unit: str
-    # ids: int
+
 
 class CourseCreate(CourseBase):
     pass
