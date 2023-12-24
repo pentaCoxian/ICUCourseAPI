@@ -36,14 +36,9 @@ def check_API(db: Session = Depends(get_db)):
 def generate_Token(db: Session = Depends(get_db)):
     return {"msg": "not implimented","token":""}
 
-# /api/cataloge/v1/course/list
-#   -token
-#   -list of col
-#
-#   return array of json obj
 @app.get("/api/c/v1/course/fulllist")
-def full_Course_list(ids = '30307',db: Session = Depends(get_db)):
-    db_responce = crud.get_full(db)
+def full_Course_list(db: Session = Depends(get_db), cols:str = '[rgno, title_e]'):
+    db_responce = crud.get_full(db, cols)
     responce = db_responce
     return {"responce":responce}
 
@@ -111,7 +106,7 @@ def custom_openapi():
         return app.openapi_schema
     openapi_schema = get_openapi(
         title="ICU API",
-        version="0.5.0",
+        version="v0.5.0",
         summary="This is is based on OpenAPI schema",
         description="All data acessable are taken from data available to the public.",
         routes=app.routes,
