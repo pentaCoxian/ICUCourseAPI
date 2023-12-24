@@ -1,6 +1,7 @@
 from fastapi import Depends, FastAPI, HTTPException
 from sqlalchemy.orm import Session
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.openapi.utils import get_openapi
 import re
 import os
 from . import crud, models, schemas
@@ -20,15 +21,10 @@ def get_db():
     finally:
         db.close()
  
-@app.get("/")
-def check_root():
-    return {"hello":"api"}
-
-
 # /api/cataloge/v1/check
 # Just to check if API is alive
-@app.get("/api/check")
-def checkAPI(db: Session = Depends(get_db)):
+@app.get("/api")
+def check_API(db: Session = Depends(get_db)):
     return {"msg":"Welcome to ICU course API"}
 
 # # /api/cataloge/v1/auth
@@ -37,7 +33,7 @@ def checkAPI(db: Session = Depends(get_db)):
 #     return {"msg":"Welcome to ICU course API"}
 # For now, token verification will not be used. instead nginx will filter non whi
 @app.get("/api/c/v1/auth", status_code = 501)
-def generateToken(db: Session = Depends(get_db)):
+def generate_Token(db: Session = Depends(get_db)):
     return {"msg": "not implimented","token":""}
 
 # /api/cataloge/v1/course/list
@@ -46,23 +42,19 @@ def generateToken(db: Session = Depends(get_db)):
 #
 #   return array of json obj
 @app.get("/api/c/v1/course/fulllist")
-def Course_full(ids = '30307',db: Session = Depends(get_db)):
+def full_Course_list(ids = '30307',db: Session = Depends(get_db)):
     db_responce = crud.get_full(db)
-    # responce = []
-    # for row in db_responce:
-    #     row_as_dict = row._asdict()
-    #     responce.append(row_as_dict)
     responce = db_responce
     return {"responce":responce}
 
 @app.get("/api/c/v1/course/partial")
-def Course_full(db: Session = Depends(get_db)):
+def course_Full(db: Session = Depends(get_db)):
     db_responce = crud.get_partial(db)
     responce = db_responce
     return {"responce":responce}
 
 @app.get("/api/c/v1/course/list")
-def Course_full(db: Session = Depends(get_db)):
+def course_Full(db: Session = Depends(get_db)):
     db_responce = crud.search_limited(db,responce_columns)
     responce = db_responce
     return {"responce":responce}
@@ -112,3 +104,23 @@ def Course_full(db: Session = Depends(get_db)):
 #   -list of wanted course
 #   -year
 #   -algorythm number <- regards only 1st
+
+
+def custom_openapi():
+    if app.openapi_schema:
+        return app.openapi_schema
+    openapi_schema = get_openapi(
+        title="ICU API",
+        version="0.5.0",
+        summary="This is is based on OpenAPI schema",
+        description="All data acessable are taken from data available to the public.",
+        routes=app.routes,
+    )
+    openapi_schema["info"]["x-logo"] = {
+        "url": "https://fastapi.tiangolo.com/img/logo-margin/logo-teal.png"
+    }
+    app.openapi_schema = openapi_schema
+    return app.openapi_schema
+
+
+app.openapi = custom_openapi
