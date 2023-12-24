@@ -38,7 +38,7 @@ cd ./icuCourseAPI
 python3.11 -m venv venv
 
 source venv/bin/activate
-pip install fastapi "uvicorn[standard]" sqlalchemy python-dotenv mariadb "python-jose[cryptography]" "passlib[bcrypt]"
+pip install fastapi "uvicorn[standard]" sqlalchemy python-dotenv mariadb "python-jose[cryptography]" "passlib[bcrypt]" gunicorn
 ```
 
 Finally,
