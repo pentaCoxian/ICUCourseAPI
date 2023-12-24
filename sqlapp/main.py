@@ -1,28 +1,17 @@
-import secrets
-from typing import Annotated
-from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from fastapi import Depends, FastAPI, HTTPException, status
-from fastapi.security import HTTPBasic, HTTPBasicCredentials
-from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
-import os
-from dotenv import load_dotenv
 from fastapi import Depends, FastAPI, HTTPException
 from sqlalchemy.orm import Session
 from fastapi.middleware.cors import CORSMiddleware
 import re
-
+import os
 from . import crud, models, schemas
 from .database import SessionLocal, engine
+from sqlalchemy.orm import sessionmaker
 
-SessionClass = sessionmaker(engine)
-session = SessionClass()
 
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
+
 
 def get_db():
     db = SessionLocal()
@@ -30,57 +19,69 @@ def get_db():
         yield db
     finally:
         db.close()
-
-# def get_current_username(
-#     credentials: Annotated[HTTPBasicCredentials, Depends(security)]
-# ):
-#     current_username_bytes = credentials.username.encode("utf8")
-#     correct_username_bytes = b"stanleyjobson"
-#     is_correct_username = secrets.compare_digest(
-#         current_username_bytes, correct_username_bytes
-#     )
-#     current_password_bytes = credentials.password.encode("utf8")
-#     correct_password_bytes = b"swordfish"
-#     is_correct_password = secrets.compare_digest(
-#         current_password_bytes, correct_password_bytes
-#     )
-#     if not (is_correct_username and is_correct_password):
-#         raise HTTPException(
-#             status_code=status.HTTP_401_UNAUTHORIZED,
-#             detail="Incorrect email or password",
-#             headers={"WWW-Authenticate": "Basic"},
-#         )
-#     return credentials.username
-
-
-# @app.get("/users/me")
-# def read_current_user(username: Annotated[str, Depends(get_current_username)]):
-#     return {"username": username}
+ 
+@app.get("/")
+def check_root():
+    return {"hello":"api"}
 
 
 # /api/cataloge/v1/check
-@app.get("/api/cataloge/check")
-def check(db: Session = Depends(get_db)):
+# Just to check if API is alive
+@app.get("/api/check")
+def checkAPI(db: Session = Depends(get_db)):
     return {"msg":"Welcome to ICU course API"}
 
-# /api/cataloge/v1/auth
-@app.get("/api/v1/")
-def checkAPI(db: Session = Depends(get_db)):
-    returm "token"
-
+# # /api/cataloge/v1/auth
+# @app.get("/api/v1/auth")
+# def checkAPI(db: Session = Depends(get_db)):
+#     return {"msg":"Welcome to ICU course API"}
+# For now, token verification will not be used. instead nginx will filter non whi
+@app.get("/api/c/v1/auth", status_code = 501)
+def generateToken(db: Session = Depends(get_db)):
+    return {"msg": "not implimented","token":""}
 
 # /api/cataloge/v1/course/list
 #   -token
 #   -list of col
 #
 #   return array of json obj
+@app.get("/api/c/v1/course/fulllist")
+def Course_full(ids = '30307',db: Session = Depends(get_db)):
+    db_responce = crud.get_full(db)
+    # responce = []
+    # for row in db_responce:
+    #     row_as_dict = row._asdict()
+    #     responce.append(row_as_dict)
+    responce = db_responce
+    return {"responce":responce}
 
-# /api/cataloge/v1/course/details
+@app.get("/api/c/v1/course/partial")
+def Course_full(db: Session = Depends(get_db)):
+    db_responce = crud.get_partial(db)
+    responce = db_responce
+    return {"responce":responce}
+
+@app.get("/api/c/v1/course/list")
+def Course_full(db: Session = Depends(get_db)):
+    db_responce = crud.search_limited(db,responce_columns)
+    responce = db_responce
+    return {"responce":responce}
+
+# /api/cataloge/v1/course/course/details
 #   -token
 #   -regid
 #   -list of col
 #
 #   return all data of course - syllabus (could add generated syllabus url I suppose)
+# @app.get("/api/cataloge/v1/course/course/details")
+# async def create_item(item: schemas.Item):
+#     return item
+
+# @app.get("/api/c/v1/course/details")
+# def search_details(dv: Session = Depends(get_db)):
+#     res = crud.search_from_id( ids = "30307", Session = Session)
+#     return res
+
 
 # /api/cataloge/v1/course/time <- want more func. /
 #   -token
