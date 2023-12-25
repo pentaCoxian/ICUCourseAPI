@@ -6,7 +6,7 @@ from .database import Base
 
 class Course(Base):
     __tablename__ = "courses"
-    rgno = Column(Text,primary_key = True)
+    rgno = Column(String(length=10),primary_key = True)
     season = Column(Text)
     ay = Column(Text)
     course_no = Column(Text)
