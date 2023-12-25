@@ -10,7 +10,6 @@ from sqlalchemy.orm import sessionmaker
 
 
 models.Base.metadata.create_all(bind=engine)
-
 app = FastAPI()
 
 
@@ -36,23 +35,12 @@ def check_API(db: Session = Depends(get_db)):
 def generate_Token(db: Session = Depends(get_db)):
     return {"msg": "not implimented","token":""}
 
-@app.get("/api/c/v1/course/fulllist")
-def full_Course_list(db: Session = Depends(get_db), cols:str = '[rgno, title_e]'):
-    db_responce = crud.get_full(db, cols)
-    responce = db_responce
-    return {"responce":responce}
-
-@app.get("/api/c/v1/course/partial")
-def course_Full(db: Session = Depends(get_db)):
-    db_responce = crud.get_partial(db)
-    responce = db_responce
-    return {"responce":responce}
-
 @app.get("/api/c/v1/course/list")
-def course_Full(db: Session = Depends(get_db)):
-    db_responce = crud.search_limited(db,responce_columns)
-    responce = db_responce
-    return {"responce":responce}
+def course_Full(db: Session = Depends(get_db),field: str = 'rgno,title_e'):
+    db_responce = crud.search_limited(db,field)
+    responce = {}
+    responce["responce"] = db_responce
+    return responce
 
 # /api/cataloge/v1/course/course/details
 #   -token
