@@ -32,16 +32,21 @@ def check_API(db: Session = Depends(get_db)):
 #     return {"msg":"Welcome to ICU course API"}
 # For now, token verification will not be used. instead nginx will filter non whi
 @app.get("/api/c/v1/auth", status_code = 501)
-def generate_Token(db: Session = Depends(get_db)):
+def generate_token(db: Session = Depends(get_db)):
     return {"msg": "not implimented","token":""}
 
 @app.get("/api/c/v1/course/list")
-def course_Full(db: Session = Depends(get_db),field: str = 'rgno,title_e'):
-    db_responce = crud.search_limited(db,field)
+def course_full(db: Session = Depends(get_db), returns: str = 'rgno,title_e'):
+    db_responce = crud.search_limited(db, returns)
     responce = {}
     responce["responce"] = db_responce
     return responce
 
+@app.get("/api/c/v1/course/search")
+def search_from_target(db: Session = Depends(get_db), returns: str = 'rgno,title_e', target: str = 'rgno,title_e', query: str = ''):
+    db_responce = crud.search(db, returns, target, query)
+    responce = {}
+    responce["responce"] = db_responce
 # /api/cataloge/v1/course/course/details
 #   -token
 #   -regid
