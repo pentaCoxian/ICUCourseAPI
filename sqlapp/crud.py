@@ -5,31 +5,20 @@ from . import models, schemas
 
 Course = models.Course
 
+default_fields = ["rgno","season","ay","course_no","old_cno","lang","section","title_e","title_j","schedule","room","comment","maxnum","instructor","unit"]
 
 def check(db: Session):
     return {"result":"Success"}
 
-# TODO query text formatting
-def get_full(db: Session, return_columns: str):
-    if return_columns == []:
-        results = db.query(Course).all()
-    else:
-        query_list = return_columns.strip('[]')
-        print(query_list)
-        stmt = (
-            select(text(query_list))
-        )
-        results = db.execute(stmt).fetch_all()
-    return results
 
-
-def get_partial(db: Session):
-    responce = db.query(Course.rgno,Course.title_e)
-    return responce
-
-def search_limited(db: Session):
-    list_a = ['rgno','title_e']
-    filter_list = []
-    filter_list.append(Course.key for key in list_a)
-    responce_list = db.query(key for key in filter_list).all()
+def search_limited(db: Session, selected_fields: str):
+    selected_fields = selected_fields.strip("[]").split(",")
+    try:
+        selected_attributes = [getattr(Course, field) for field in selected_fields]
+    except AttributeError as err:
+        return str(err)
+    except:
+        return "Internal error"
+    query_result = db.query(*selected_attributes).all()
+    responce_list= [dict(zip(selected_fields, row)) for row in query_result]
     return responce_list
