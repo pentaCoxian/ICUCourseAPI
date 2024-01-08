@@ -30,7 +30,7 @@ we use a virtual enviroment for development.
 
 install maradb connector c CS package. ([Install CS package](https://mariadb.com/docs/connect/programming-languages/c/install/))
 
-> [!WARNING]
+> [!TIP]
 > If the above doesn't work, try `sudo apt-get install libmariadb3 libmariadb-dev`
 
 ```
