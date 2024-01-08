@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session, load_only
-from sqlalchemy import text, desc, select, DDL, event
+from sqlalchemy import text, desc, select, DDL, event, func, or_
 from sqlalchemy.dialects.mysql import match
 from . import models, schemas
 
@@ -66,10 +66,12 @@ def experimental(db:Session, selected_fields: str, query: str):
         *selected_attributes,
         against=query,
     )
-    time = '3/M'
+    times = ['"5/W"','"6/W"']
     stmt = (
         select(Course,Syllabus)
-        .filter(Course.schedule.like(f'%{time}%'))
+        .filter(
+            or_(*[func.JSON_CONTAINS(Course.schedule_meta, time) for time in times])
+        )
         .join(Course, Course.rgno == Syllabus.course_rgno)
         .where(match_expr.in_boolean_mode())
         .order_by(desc(match_expr))
