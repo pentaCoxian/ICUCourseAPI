@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session, load_only
-from sqlalchemy import text, desc, select, DDL, event, func, or_
+from sqlalchemy import text, desc, select, DDL, event, func, or_, and_
 from sqlalchemy.dialects.mysql import match
 from . import models, schemas
 
@@ -59,25 +59,49 @@ def search_by_time(db: Session, selected_fields: str, qery: str):
     return db.execute(stmt)
     # return match_expr
 
-def experimental(db:Session, selected_fields: str, query: str):
+def experimental(db:Session, selected_fields: str, koma: str = '"3/TU","2/TH","3/TH"', query: str = '', strict: str= "complite"):
     selected_fields = selected_fields.split(",")
     selected_attributes = [getattr(Course, field) for field in selected_fields]
     match_expr = match(
         *selected_attributes,
         against=query,
     )
-    times = ['"5/W"','"6/W"']
-    stmt = (
-        select(Course,Syllabus)
-        .filter(
-            or_(*[func.JSON_CONTAINS(Course.schedule_meta, time) for time in times])
+    koma = koma.replace("'",'')
+    times = koma.split(',')
+    selected = select(Course,Syllabus)
+    print(times)
+    if strict == "complite":
+        # only matches complete match of koma list
+        cleaned_list = [element.replace('"', '') for element in times]
+        filter_time = selected.filter(Course.schedule_meta == cleaned_list)
+    elif strict == "strict":
+        # has to contain every koma
+        filter_time = selected.filter(
+                and_(*[func.JSON_CONTAINS(Course.schedule_meta, time) for time in times])
+            )
+    elif strict == "loose":
+        # if any of one koma matches
+        filter_time = selected.filter(
+                or_(*[func.JSON_CONTAINS(Course.schedule_meta, time) for time in times])
+            )
+    if query == '':
+        stmt = (
+            filter_time
+            .join(Course, Course.rgno == Syllabus.course_rgno)
         )
-        .join(Course, Course.rgno == Syllabus.course_rgno)
-        .where(match_expr.in_boolean_mode())
-        .order_by(desc(match_expr))
-    )
+    else:
+        stmt = (
+            filter_time
+            .join(Course, Course.rgno == Syllabus.course_rgno)
+            .where(match_expr.in_boolean_mode())
+            .order_by(desc(match_expr))
+        )
     return db.execute(stmt)
 
 def makeFullTextIndex(db: Session, tablename: str = 'courses', indexname: str = "idx_title", field: str = "title_j, title_e"):
     sql = """ALTER TABLE """ + tablename + """ ADD FULLTEXT INDEX IF NOT EXISTS """ + indexname +  """(""" + field + """) COMMENT 'tokenizer "TokenMecab"';"""
     return db.execute(text(sql))
+
+
+string = '"4/M","4/W"'
+string.split(',')

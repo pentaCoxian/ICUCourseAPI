@@ -55,9 +55,9 @@ def search_from_full(db: Session = Depends(get_db), returns: str = 'rgno,title_e
     responce["responce"] = db_responce
     
 @app.get("/api/c/v1/time/search")
-def search_from_time(db: Session = Depends(get_db), target: str = 'title_j,title_e', query: str = ''):
+def search_from_time(db: Session = Depends(get_db),target: str = 'title_j,title_e', query: str = '', koma: str = '"3/TU"', strict: str = 'complite'):
     tmp = crud.makeFullTextIndex(db)
-    db_responce = crud.experimental(db, target, query)
+    db_responce = crud.experimental(db, selected_fields = target, koma = koma, query = query, strict = strict)
     dictLis = []
     for row in db_responce:
         row_as_dict = row._asdict()
