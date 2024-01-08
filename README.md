@@ -44,7 +44,7 @@ pip install fastapi "uvicorn[standard]" sqlalchemy python-dotenv mariadb "python
 Finally, for development use the `--reload` prefix for hot reload. Use of gunicorn to spawn workers and adding the service to systemd are also highly recommended for production.
 
 ```
-uvicorn sqlapp.main:app --reload
+uvicorn sqlapp.main:app --reload --host 0.0.0.0
 ```
 
 > [!TIP]
