@@ -63,3 +63,20 @@ class Syllabus(Base):
     url = Column(String(length=300))
     course_rgno = Column(Integer, ForeignKey('courses.rgno'))
     courses = relationship('Course', back_populates='syllabus')
+
+class Summary(Base):
+    __tablename__="summary"
+    __table_args__ = {
+    'mariadb_ENGINE': 'mroonga',
+    'mariadb_DEFAULT_CHARSET': 'utf8mb4'
+    }
+    rgno=Column(sa.Integer,ForeignKey('courses.rgno'),primary_key=True)
+    summary=Column(sa.Text)
+    summary_j=Column(sa.Text)
+    summary_e=Column(sa.Text)
+    other=Column(sa.Text)
+
+# SELECT syllabi.cno, syllabi.term, syllabi.title_j, syllabi.title_j AS title_j__1, syllabi.rgno, syllabi.lang 
+# FROM syllabi INNER JOIN courses ON courses.rgno = summary.rgno 
+# WHERE syllabi.term IN ('Spring Term', 'Autumn Term', 'Winter Term') AND MATCH (syllabi.title_j, syllabi.title_e, syllabi.instructor, syllabi.descreption, syllabi.descreption_j, syllabi.goals, syllabi.goals_j, syllabi.content, syllabi.content_j, syllabi.lang_of_inst, syllabi.pollicy, syllabi.individual_study, syllabi.ref, syllabi.notes, syllabi.schedule) AGAINST ('+test' IN BOOLEAN MODE) ORDER BY MATCH (syllabi.title_j, syllabi.title_e, syllabi.instructor, syllabi.descreption, syllabi.descreption_j, syllabi.goals, syllabi.goals_j, syllabi.content, syllabi.content_j, syllabi.lang_of_inst, syllabi.pollicy, syllabi.individual_study, syllabi.ref, syllabi.notes, syllabi.schedule) AGAINST ('+test') DESC]
+# [parameters: (, , , '+test', '+test')

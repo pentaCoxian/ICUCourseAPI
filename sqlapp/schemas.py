@@ -61,3 +61,17 @@ class SyllabusCreate(SyllabusBase):
 class Syllabus(SyllabusBase):
     class Config:
         orm_mode: True
+
+class SummaryBase(BaseModel):
+    rgno: int
+    summary: str
+    summary_j: str
+    summary_e: str
+    other: str
+
+class SummaryCreate(SummaryBase):
+    pass
+
+class Summary(SummaryBase):
+    class Config:
+        orm_mode: True

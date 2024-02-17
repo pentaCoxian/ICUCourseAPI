@@ -5,12 +5,40 @@ from . import models, schemas
 
 Course = models.Course
 Syllabus = models.Syllabus
+Summary = models.Summary
 
 default_fields_course = ["rgno","season","ay","course_no","old_cno","lang","section","title_e","title_j","schedule","room","comment","maxnum","instructor","unit"]
 default_fields_syllabus = ['rgno', 'ay', 'term', 'cno', 'title_e', 'title_j', 'lang', 'instructor', 'unit_e', 'koma_lecture_e', 'koma_seminar_e', 'koma_labo_e', 'koma_act_e', 'koma_int_e', 'descreption', 'descreption_j', 'goals', 'goals_j', 'content', 'content_j', 'lang_of_inst', 'pollicy', 'individual_study', 'ref', 'notes', 'schedule', 'url', 'course_rgno']
 
 def check(db: Session):
     return {"result":"Success"}
+
+def search_legacy(db: Session, query: str='', term:str='*', selected_fields: str='title_j,title_e,instructor,descreption,descreption_j,goals,goals_j,content,content_j,lang_of_inst,pollicy,individual_study,ref,notes,schedule'):
+    selected_fields = selected_fields.split(",")
+    try:
+        selected_attributes = [getattr(Syllabus, field) for field in selected_fields]
+    except AttributeError as err:
+        return str(err)
+    except:
+        return "Internal error"
+
+    if query != '':
+        query = '+' + query
+    if len(query)!=0 and query[-1]!=' ':
+        query = query.replace(' ',' +')
+    match_expr = match(
+        *selected_attributes,
+        against=query,
+    )
+    stmt = (
+        select(models.Syllabus.cno,models.Syllabus.term,models.Syllabus.title_j,models.Syllabus.rgno,Syllabus.lang,models.Summary.summary_j,models.Summary.summary_e)
+        .filter(models.Syllabus.term.in_(['Spring Term','Autumn Term','Winter Term']) if term == '*' else models.Syllabus.term ==  term)
+        .where(match_expr.in_boolean_mode())
+        .order_by(desc(match_expr))
+        .select_from(models.Syllabus)
+        .join(models.Summary, models.Syllabus.rgno == models.Summary.rgno)  
+    )
+    return db.execute(stmt)
 
 
 def search_limited(db: Session, selected_fields: str):
@@ -134,8 +162,3 @@ def makeFullTextIndex(db: Session, tablename: str = 'courses', indexname: str = 
     print(sql)
     db.execute(text(sql))
     db.flush()
-    
-
-
-string = '"4/M","4/W"'
-string.split(',')

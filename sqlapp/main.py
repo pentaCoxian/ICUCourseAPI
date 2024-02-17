@@ -26,6 +26,17 @@ def get_db():
 def check_API(db: Session = Depends(get_db)):
     return {"msg":"Welcome to ICU course API"}
 
+@app.get("/api/v2/legacy")
+def legacy(query:str = "",term:str="", db: Session = Depends(get_db)):
+    db_responce = crud.search_legacy(db, query, term).mappings().all()
+    resultDictList=[]
+    for i in db_responce:
+        tmp = dict(i)
+        if tmp['lang']== "":
+            tmp['lang']= "TBA"
+        resultDictList.append(tmp)
+    return resultDictList
+
 # # /api/cataloge/v1/auth
 # @app.get("/api/v1/auth")
 # def checkAPI(db: Session = Depends(get_db)):

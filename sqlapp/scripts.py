@@ -12,7 +12,7 @@ engine = create_engine(SQLALCHEMY_DATABASE_URL)
 metadata = MetaData()
 metadata.reflect(bind=engine)
 
-table = metadata.tables["syllabi"]
+table = metadata.tables["courses"]
 # Iterate over and drop all indexes except the primary key
 for index in list(table.indexes):
     print(f"Dropping index: {index.name}")
@@ -24,10 +24,21 @@ FROM syllabi
 INNER JOIN courses ON courses.rgno = syllabi.course_rgno 
 WHERE MATCH(syllabi.title_e,syllabi.title_j) AGAINST('+asia' IN BOOLEAN MODE);"""
 
-''' 
-Alter table syllabi ADD FULLTEXT INDEX test_idx(title_j,title_e,instructor,descreption,descreption_j,goals,goals_j,content,content_j,lang_of_inst,pollicy,individual_study,ref,notes,schedule) COMMENT 'tokenizer "TokenMecab"'
-'''
 
+# fulltext indexes
+
+''' 
+Alter table syllabi ADD FULLTEXT INDEX test_idx(title_j,title_e,instructor,descreption,descreption_j,goals,goals_j,content,content_j,lang_of_inst,pollicy,individual_study,ref,notes,schedule) COMMENT 'tokenizer "TokenMecab"';
+'''
+'''
+Alter table syllabi ADD FULLTEXT INDEX full_range_idx2(title_j,title_e,instructor,descreption,descreption_j,goals,goals_j,content,content_j,lang_of_inst,pollicy,individual_study,ref,notes,schedule) COMMENT 'tokenizer "TokenMecab"';
+'''
+'''
+Alter table syllabi ADD FULLTEXT INDEX full_range_idx3(title_j,title_e,instructor,descreption,descreption_j,goals,goals_j,content,content_j,lang_of_inst,pollicy,individual_study,ref,notes,schedule) COMMENT 'tokenizer "TokenMecab"';
+'''
+'''
+alter table courses add fulltext index test_idx(title_j,title_e) comment 'tokenizer "TokenMecab"';
+'''
 
 
 # # Replace 'your_table_name' with the name of your table
