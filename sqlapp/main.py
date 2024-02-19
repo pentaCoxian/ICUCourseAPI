@@ -37,6 +37,17 @@ def legacy(query:str = "",term:str="", db: Session = Depends(get_db)):
         resultDictList.append(tmp)
     return resultDictList
 
+@app.get("/api/v2/details")
+def getdetailsWithInfo(id:str,db: Session = Depends(get_db)):
+    result = crud.getById(db,id=id).mappings().all()
+    print(result)
+    resultDictList=[]
+    for i in result:
+        tmp = dict(i)
+        resultDictList.append(tmp)
+    return resultDictList[0]
+
+
 # # /api/cataloge/v1/auth
 # @app.get("/api/v1/auth")
 # def checkAPI(db: Session = Depends(get_db)):

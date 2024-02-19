@@ -162,3 +162,37 @@ def makeFullTextIndex(db: Session, tablename: str = 'courses', indexname: str = 
     print(sql)
     db.execute(text(sql))
     db.flush()
+
+def getById(db: Session, id: str):
+    stmt=select(Syllabus.ay,
+            Syllabus.rgno,
+            Syllabus.ay,
+            Syllabus.term,
+            Syllabus.cno,
+            Syllabus.title_e ,
+            Syllabus.title_j ,
+            Syllabus.lang ,
+            Syllabus.instructor,
+            Syllabus.unit_e ,
+            Syllabus.koma_lecture_e ,
+            Syllabus.koma_seminar_e ,
+            Syllabus.koma_labo_e,
+            Syllabus.koma_act_e,
+            Syllabus.koma_int_e ,
+            Syllabus.descreption,
+            Syllabus.descreption_j,
+            Syllabus.goals,
+            Syllabus.goals_j,
+            Syllabus.content,
+            Syllabus.content_j,
+            Syllabus.lang_of_inst,
+            Syllabus.pollicy,
+            Syllabus.individual_study,
+            Syllabus.ref ,
+            Syllabus.notes ,
+            Syllabus.schedule ,
+            Course.section,
+            Course.maxnum,
+            Course.room).where(Syllabus.rgno == int(id)).join(Syllabus,Syllabus.rgno == Course.rgno)
+    
+    return db.execute(stmt)
